@@ -1,0 +1,16 @@
+# Python compiled files
+__pycache__/
+*.pyc
+
+# Virtual environment
+.venv/
+
+# IDE/Tool configs
+.claude/
+.vscode/
+.idea/
+
+# Local databases
+app/creditcard.db
+creditcard.db
+instance/
