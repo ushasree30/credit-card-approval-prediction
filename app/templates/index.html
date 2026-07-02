@@ -80,7 +80,7 @@
                     
                     <div class="form-group">
                         <label for="amt_income_total" class="form-label">Annual Income (₹)</label>
-                        <input type="number" id="amt_income_total" name="amt_income_total" class="form-control" placeholder="Enter income in ₹" min="1000" max="100000000" step="100" value="600000" required>
+                        <input type="text" id="amt_income_total" name="amt_income_total" class="form-control" placeholder="e.g. 3,00,000" value="6,00,000" required>
                     </div>
 
                     <div class="form-group">
@@ -187,6 +187,19 @@
         } else {
             expGroup.style.display = 'block';
         }
+    });
+
+    // Dynamic Indian Currency (en-IN Lakhs/Crores) comma formatting on typing
+    const incomeInput = document.getElementById('amt_income_total');
+    incomeInput.addEventListener('input', function(e) {
+        // Strip out any character that is not a digit
+        let rawVal = this.value.replace(/[^\d]/g, '');
+        if (rawVal === '') {
+            this.value = '';
+            return;
+        }
+        // Format the parsed integer using the Indian locale
+        this.value = Number(rawVal).toLocaleString('en-IN');
     });
 </script>
 {% endblock %}
