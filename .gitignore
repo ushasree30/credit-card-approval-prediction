@@ -14,3 +14,7 @@ __pycache__/
 app/creditcard.db
 creditcard.db
 instance/
+
+# Large raw datasets
+dataset/
+dataset-cc.csv
