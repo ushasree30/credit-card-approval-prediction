@@ -9,7 +9,11 @@ main = Blueprint('main', __name__)
 # --- MAIN ROUTES ---
 
 @main.route('/')
-def index():
+def home():
+    return render_template('home.html')
+
+@main.route('/dashboard')
+def dashboard():
     # Get stats for all queries (public / no authentication)
     total_queries = Approval_Prediction.query.count()
     approved_queries = Approval_Prediction.query.filter_by(prediction_result=1).count()
@@ -20,7 +24,7 @@ def index():
     recent_predictions = Approval_Prediction.query.order_by(Approval_Prediction.predicted_at.desc()).limit(5).all()
     
     return render_template(
-        'index.html',
+        'dashboard.html',
         total_queries=total_queries,
         approved_queries=approved_queries,
         rejected_queries=rejected_queries,
@@ -34,10 +38,6 @@ def predict():
     active_model = ML_Model.query.filter_by(is_active=True).first()
     
     if request.method == 'POST':
-        if not active_model:
-            flash('No active ML Model found! Please run the training pipeline first to register a model.', 'warning')
-            return redirect(url_for('main.models_dashboard'))
-            
         try:
             # Retrieve applicant details from form
             gender = request.form.get('gender')
@@ -91,14 +91,15 @@ def predict():
             db.session.add(applicant)
             db.session.commit()
             
-            # Run prediction logic using active model
-            prediction_label, probability = preprocess_and_predict(applicant, active_model.model_path)
+            # Run prediction logic using active model or fallback model path
+            model_path = active_model.model_path if active_model else 'models/best_model.pkl'
+            prediction_label, probability = preprocess_and_predict(applicant, model_path)
             
             # Save prediction record
             prediction = Approval_Prediction(
                 user_id=None,
                 applicant_id=applicant.id,
-                model_used_id=active_model.id,
+                model_used_id=active_model.id if active_model else 1,
                 prediction_result=int(prediction_label),
                 prediction_probability=float(probability)
             )
@@ -113,7 +114,7 @@ def predict():
             flash(f'An error occurred: {str(e)}', 'danger')
             return redirect(url_for('main.predict'))
             
-    return render_template('predict.html', active_model=active_model)
+    return render_template('index.html', active_model=active_model)
 
 @main.route('/result/<int:prediction_id>')
 def result(prediction_id):

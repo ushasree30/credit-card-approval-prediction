@@ -10,11 +10,12 @@
 <body>
     <!-- Premium Header & Navbar -->
     <nav class="navbar" id="app-navbar">
-        <a href="{{ url_for('main.index') }}" class="nav-brand">
+        <a href="{{ url_for('main.home') }}" class="nav-brand">
             💳 CreditValet <span>Internship Project</span>
         </a>
         <ul class="nav-links">
-            <li><a href="{{ url_for('main.index') }}" class="nav-link {% if request.path == url_for('main.index') %}active{% endif %}">Dashboard</a></li>
+            <li><a href="{{ url_for('main.home') }}" class="nav-link {% if request.path == url_for('main.home') %}active{% endif %}">Home</a></li>
+            <li><a href="{{ url_for('main.dashboard') }}" class="nav-link {% if request.path == url_for('main.dashboard') %}active{% endif %}">Dashboard</a></li>
             <li><a href="{{ url_for('main.predict') }}" class="nav-link {% if request.path == url_for('main.predict') %}active{% endif %}">Predict</a></li>
             <li><a href="{{ url_for('main.history') }}" class="nav-link {% if request.path == url_for('main.history') %}active{% endif %}">History</a></li>
             <li><a href="{{ url_for('main.models_dashboard') }}" class="nav-link {% if request.path == url_for('main.models_dashboard') %}active{% endif %}">Models Dashboard</a></li>
