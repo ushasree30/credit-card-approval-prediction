@@ -40,5 +40,124 @@ class CreditValetTest(unittest.TestCase):
         r4 = self.client.get('/models')
         self.assertEqual(r4.status_code, 200)
 
+    def test_evaluate_application_approved(self):
+        from app.utils import evaluate_application
+        # Age 25, Salary 30k, Score 750, Salaried, EMI 5k (16.7%), No default
+        prediction, probability, checks = evaluate_application(
+            age_years=25.0,
+            monthly_salary=30000.0,
+            credit_score=750,
+            employment_status='Salaried',
+            existing_emi=5000.0,
+            has_loan_default=False
+        )
+        self.assertEqual(prediction, 1)
+        self.assertEqual(probability, 1.0)
+        self.assertTrue(all(c['passed'] for c in checks))
+
+    def test_evaluate_application_rejected_age(self):
+        from app.utils import evaluate_application
+        # Age 20 (fails age rule)
+        prediction, probability, checks = evaluate_application(
+            age_years=20.0,
+            monthly_salary=30000.0,
+            credit_score=750,
+            employment_status='Salaried',
+            existing_emi=5000.0,
+            has_loan_default=False
+        )
+        self.assertEqual(prediction, 0)
+        self.assertEqual(probability, 0.0)
+        self.assertFalse(checks[0]['passed'])
+
+    def test_evaluate_application_rejected_salary(self):
+        from app.utils import evaluate_application
+        # Salary 15k (fails salary rule)
+        prediction, probability, checks = evaluate_application(
+            age_years=25.0,
+            monthly_salary=15000.0,
+            credit_score=750,
+            employment_status='Salaried',
+            existing_emi=1000.0,
+            has_loan_default=False
+        )
+        self.assertEqual(prediction, 0)
+        self.assertEqual(probability, 0.0)
+        self.assertFalse(checks[1]['passed'])
+
+    def test_evaluate_application_rejected_credit(self):
+        from app.utils import evaluate_application
+        # Credit Score 650 (fails credit rule)
+        prediction, probability, checks = evaluate_application(
+            age_years=25.0,
+            monthly_salary=30000.0,
+            credit_score=650,
+            employment_status='Salaried',
+            existing_emi=5000.0,
+            has_loan_default=False
+        )
+        self.assertEqual(prediction, 0)
+        self.assertEqual(probability, 0.0)
+        self.assertFalse(checks[2]['passed'])
+
+    def test_evaluate_application_rejected_employment(self):
+        from app.utils import evaluate_application
+        # Employment Unemployed (fails employment status rule)
+        prediction, probability, checks = evaluate_application(
+            age_years=25.0,
+            monthly_salary=30000.0,
+            credit_score=750,
+            employment_status='Unemployed',
+            existing_emi=5000.0,
+            has_loan_default=False
+        )
+        self.assertEqual(prediction, 0)
+        self.assertEqual(probability, 0.0)
+        self.assertFalse(checks[3]['passed'])
+
+    def test_evaluate_application_rejected_emi(self):
+        from app.utils import evaluate_application
+        # EMI 15k on 30k salary (50% > 40%) (fails EMI limit rule)
+        prediction, probability, checks = evaluate_application(
+            age_years=25.0,
+            monthly_salary=30000.0,
+            credit_score=750,
+            employment_status='Salaried',
+            existing_emi=15000.0,
+            has_loan_default=False
+        )
+        self.assertEqual(prediction, 0)
+        self.assertEqual(probability, 0.0)
+        self.assertFalse(checks[4]['passed'])
+
+    def test_evaluate_application_rejected_default(self):
+        from app.utils import evaluate_application
+        # Default True (fails default rule)
+        prediction, probability, checks = evaluate_application(
+            age_years=25.0,
+            monthly_salary=30000.0,
+            credit_score=750,
+            employment_status='Salaried',
+            existing_emi=5000.0,
+            has_loan_default=True
+        )
+        self.assertEqual(prediction, 0)
+        self.assertEqual(probability, 0.0)
+        self.assertFalse(checks[5]['passed'])
+
+    def test_explanation_generation(self):
+        from app.utils import evaluate_application, build_explanation
+        # Test approved explanation
+        _, _, checks_approved = evaluate_application(25, 30000, 750, 'Salaried', 5000, False)
+        exp_approved = build_explanation(True, checks_approved)
+        self.assertIn("approved", exp_approved)
+
+        # Test rejected explanation
+        _, _, checks_rejected = evaluate_application(20, 15000, 650, 'Unemployed', 15000, True)
+        exp_rejected = build_explanation(False, checks_rejected)
+        self.assertIn("rejected", exp_rejected)
+        self.assertIn("age is at least 21 years", exp_rejected)
+        self.assertIn("monthly salary is Rs. 20,000 or above", exp_rejected)
+
 if __name__ == '__main__':
     unittest.main()

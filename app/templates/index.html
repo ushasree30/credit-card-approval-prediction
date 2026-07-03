@@ -79,8 +79,18 @@
                     <h3 class="form-section-title">💰 Financials, Assets & Job</h3>
                     
                     <div class="form-group">
-                        <label for="amt_income_total" class="form-label">Annual Income (₹)</label>
-                        <input type="text" id="amt_income_total" name="amt_income_total" class="form-control" placeholder="e.g. 3,00,000" value="6,00,000" required>
+                        <label for="monthly_salary" class="form-label">Monthly Salary (₹)</label>
+                        <input type="text" id="monthly_salary" name="monthly_salary" class="form-control" placeholder="e.g. 50,000" value="50,000" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="credit_score" class="form-label">Credit Score</label>
+                        <input type="number" id="credit_score" name="credit_score" class="form-control" min="300" max="900" value="750" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="existing_emi" class="form-label">Existing Monthly EMI (₹)</label>
+                        <input type="text" id="existing_emi" name="existing_emi" class="form-control" placeholder="e.g. 5,000" value="0" required>
                     </div>
 
                     <div class="form-group">
@@ -125,9 +135,16 @@
                     <div class="form-group">
                         <label for="employment_status" class="form-label">Employment Status</label>
                         <select id="employment_status" name="employment_status" class="form-control" required>
-                            <option value="Employed">Employed</option>
+                            <option value="Salaried">Salaried</option>
+                            <option value="Self-employed">Self-employed</option>
                             <option value="Unemployed">Unemployed / Retired</option>
                         </select>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem; margin-bottom: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.95rem; cursor: pointer; font-weight: 500;">
+                            <input type="checkbox" id="loan_default_history" name="loan_default_history" style="accent-color: var(--primary);"> Has Defaulted on Loans Before?
+                        </label>
                     </div>
 
                     <div class="form-group" id="experience-group">
@@ -190,16 +207,20 @@
     });
 
     // Dynamic Indian Currency (en-IN Lakhs/Crores) comma formatting on typing
-    const incomeInput = document.getElementById('amt_income_total');
-    incomeInput.addEventListener('input', function(e) {
-        // Strip out any character that is not a digit
-        let rawVal = this.value.replace(/[^\d]/g, '');
-        if (rawVal === '') {
-            this.value = '';
-            return;
-        }
-        // Format the parsed integer using the Indian locale
-        this.value = Number(rawVal).toLocaleString('en-IN');
-    });
+    const formatInput = function(inputEl) {
+        if (!inputEl) return;
+        inputEl.addEventListener('input', function(e) {
+            // Strip out any character that is not a digit
+            let rawVal = this.value.replace(/[^\d]/g, '');
+            if (rawVal === '') {
+                this.value = '';
+                return;
+            }
+            // Format the parsed integer using the Indian locale
+            this.value = Number(rawVal).toLocaleString('en-IN');
+        });
+    };
+    formatInput(document.getElementById('monthly_salary'));
+    formatInput(document.getElementById('existing_emi'));
 </script>
 {% endblock %}

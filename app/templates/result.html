@@ -31,12 +31,20 @@
             </div>
         </div>
 
+        <!-- Explanation Box -->
+        {% if prediction.explanation %}
+        <div style="text-align: left; margin: 1.5rem 0; padding: 1.2rem; border-radius: 12px; background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.3);">
+            <h4 style="color: var(--primary); margin-bottom: 0.5rem; font-family: 'Outfit'; font-size: 1rem; font-weight: 600;">📋 Decision Explanation</h4>
+            <p style="font-size: 0.95rem; line-height: 1.5; color: var(--text-main); margin: 0;">{{ prediction.explanation }}</p>
+        </div>
+        {% endif %}
+
         <!-- Evaluation Details Accordion / Info Card -->
         <div style="text-align: left; margin: 2rem 0; background: rgba(0, 0, 0, 0.2); border-radius: 12px; border: 1px solid var(--border-color); padding: 1.5rem;">
             <h4 style="color: var(--primary); margin-bottom: 1rem; font-family: 'Outfit'; font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3rem;">Applicant Profile Summary</h4>
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; font-size: 0.9rem;">
                 <div><span style="color: var(--text-muted);">Gender:</span> {{ 'Male' if prediction.applicant.gender == 'M' else 'Female' }}</div>
-                <div><span style="color: var(--text-muted);">Income:</span> ₹{{ "{:,.2f}".format(prediction.applicant.amt_income_total) }}</div>
+                <div><span style="color: var(--text-muted);">Monthly Salary:</span> ₹{{ "{:,.2f}".format(prediction.applicant.amt_income_total / 12) }}</div>
                 <div><span style="color: var(--text-muted);">Age:</span> {{ "%.1f"|format(-prediction.applicant.days_birth / 365.25) }} Years</div>
                 <div><span style="color: var(--text-muted);">Work Exp:</span> 
                     {% if prediction.applicant.days_employed == 365243 %}
@@ -49,6 +57,9 @@
                 <div><span style="color: var(--text-muted);">Marital Status:</span> {{ prediction.applicant.name_family_status }}</div>
                 <div><span style="color: var(--text-muted);">Car Owner:</span> {{ 'Yes' if prediction.applicant.own_car == 'Y' else 'No' }}</div>
                 <div><span style="color: var(--text-muted);">Property Owner:</span> {{ 'Yes' if prediction.applicant.own_realty == 'Y' else 'No' }}</div>
+                <div><span style="color: var(--text-muted);">Credit Score:</span> {{ prediction.applicant.credit_score }}</div>
+                <div><span style="color: var(--text-muted);">Existing EMI:</span> ₹{{ "{:,.2f}".format(prediction.applicant.existing_emi) }}</div>
+                <div style="grid-column: span 2;"><span style="color: var(--text-muted);">Loan Default History:</span> {{ 'Has Defaults' if prediction.applicant.loan_default_history else 'No Default History' }}</div>
             </div>
             
             <div style="margin-top: 1rem; border-top: 1px dashed var(--border-color); padding-top: 0.8rem; font-size: 0.8rem; color: var(--text-muted); text-align: center;">

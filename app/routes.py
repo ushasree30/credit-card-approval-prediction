@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from app.models import db, Applicant_Details, ML_Model, Approval_Prediction
-from app.utils import preprocess_and_predict
+from app.utils import evaluate_application, build_explanation
 from datetime import datetime
 
 # Initialize main blueprint
@@ -14,15 +14,13 @@ def home():
 
 @main.route('/dashboard')
 def dashboard():
-    # Get stats for all queries (public / no authentication)
     total_queries = Approval_Prediction.query.count()
     approved_queries = Approval_Prediction.query.filter_by(prediction_result=1).count()
     rejected_queries = Approval_Prediction.query.filter_by(prediction_result=0).count()
     active_model = ML_Model.query.filter_by(is_active=True).first()
-    
-    # Recent 5 predictions
+
     recent_predictions = Approval_Prediction.query.order_by(Approval_Prediction.predicted_at.desc()).limit(5).all()
-    
+
     return render_template(
         'dashboard.html',
         total_queries=total_queries,
@@ -34,41 +32,54 @@ def dashboard():
 
 @main.route('/predict', methods=['GET', 'POST'])
 def predict():
-    # Check if there is an active ML Model
     active_model = ML_Model.query.filter_by(is_active=True).first()
-    
+
     if request.method == 'POST':
         try:
-            # Retrieve applicant details from form
+            # --- Core fields already in the schema ---
             gender = request.form.get('gender')
             own_car = request.form.get('own_car')
             own_realty = request.form.get('own_realty')
             cnt_children = int(request.form.get('cnt_children', 0))
-            amt_income_total_raw = request.form.get('amt_income_total', '0')
-            amt_income_total = float(str(amt_income_total_raw).replace(',', ''))
+
+            # Monthly salary is now the primary input; annual income is derived
+            # from it so the existing amt_income_total column keeps working.
+            monthly_salary_raw = request.form.get('monthly_salary', '0')
+            monthly_salary = float(str(monthly_salary_raw).replace(',', ''))
+            amt_income_total = monthly_salary * 12
+
             name_income_type = request.form.get('name_income_type')
             name_education_type = request.form.get('name_education_type')
             name_family_status = request.form.get('name_family_status')
             name_housing_type = request.form.get('name_housing_type')
-            
-            # Days birth & days employed conversions
-            age_years = float(request.form.get('age', 30))
+
+            age_years = float(request.form.get('age', 0))
             days_birth = int(-age_years * 365.25)
-            
+
+            # Employment status now only expects the two qualifying values,
+            # plus other statuses that will simply fail the rule check.
             employment_status = request.form.get('employment_status')
             if employment_status == 'Unemployed':
-                days_employed = 365243 # Standard Kaggle code representing unemployed/pensioner
+                days_employed = 365243  # Standard Kaggle code for unemployed/pensioner
             else:
                 exp_years = float(request.form.get('experience', 0))
                 days_employed = int(-exp_years * 365.25)
-                
+
             flag_mobil = int(request.form.get('flag_mobil', 1))
             flag_work_phone = int(request.form.get('flag_work_phone', 0))
             flag_phone = int(request.form.get('flag_phone', 0))
             flag_email = int(request.form.get('flag_email', 0))
             occupation_type = request.form.get('occupation_type')
-            
-            # Save applicant details to database (user_id is None)
+
+            # --- New fields required by the approval rules ---
+            # NOTE: credit_score, existing_emi and loan_default_history need
+            # corresponding columns added to Applicant_Details (see models.py).
+            credit_score = int(request.form.get('credit_score', 0))
+            existing_emi_raw = request.form.get('existing_emi', '0')
+            existing_emi = float(str(existing_emi_raw).replace(',', ''))
+            has_loan_default = request.form.get('loan_default_history') == 'on'
+
+            # Save applicant details to database
             applicant = Applicant_Details(
                 user_id=None,
                 gender=gender,
@@ -86,35 +97,46 @@ def predict():
                 flag_work_phone=flag_work_phone,
                 flag_phone=flag_phone,
                 flag_email=flag_email,
-                occupation_type=occupation_type
+                occupation_type=occupation_type,
+                credit_score=credit_score,
+                existing_emi=existing_emi,
+                loan_default_history=has_loan_default
             )
-            
+
             db.session.add(applicant)
             db.session.commit()
-            
-            # Run prediction logic using active model or fallback model path
-            model_path = active_model.model_path if active_model else 'models/best_model.pkl'
-            prediction_label, probability = preprocess_and_predict(applicant, model_path)
-            
+
+            # Run the rule-based evaluation (see app/utils.py)
+            prediction_label, probability, checks = evaluate_application(
+                age_years=age_years,
+                monthly_salary=monthly_salary,
+                credit_score=credit_score,
+                employment_status=employment_status,
+                existing_emi=existing_emi,
+                has_loan_default=has_loan_default
+            )
+            explanation = build_explanation(bool(prediction_label), checks)
+
             # Save prediction record
             prediction = Approval_Prediction(
                 user_id=None,
                 applicant_id=applicant.id,
                 model_used_id=active_model.id if active_model else 1,
                 prediction_result=int(prediction_label),
-                prediction_probability=float(probability)
+                prediction_probability=float(probability),
+                explanation=explanation  # NOTE: add this column to Approval_Prediction
             )
             db.session.add(prediction)
             db.session.commit()
-            
+
             flash('Prediction generated successfully!', 'success')
             return redirect(url_for('main.result', prediction_id=prediction.id))
-            
+
         except Exception as e:
             db.session.rollback()
             flash(f'An error occurred: {str(e)}', 'danger')
             return redirect(url_for('main.predict'))
-            
+
     return render_template('index.html', active_model=active_model)
 
 @main.route('/result/<int:prediction_id>')
@@ -124,7 +146,6 @@ def result(prediction_id):
 
 @main.route('/history')
 def history():
-    # Fetch all queries since there's no auth filtering
     predictions = Approval_Prediction.query.order_by(Approval_Prediction.predicted_at.desc()).all()
     return render_template('history.html', predictions=predictions)
 
@@ -136,13 +157,8 @@ def models_dashboard():
 @main.route('/models/toggle/<int:model_id>', methods=['POST'])
 def toggle_model(model_id):
     model = ML_Model.query.get_or_404(model_id)
-    
-    # Deactivate all models
     ML_Model.query.update({ML_Model.is_active: False})
-    
-    # Activate selected model
     model.is_active = True
     db.session.commit()
-    
     flash(f'{model.model_name} activated for predictions.', 'success')
     return redirect(url_for('main.models_dashboard'))
