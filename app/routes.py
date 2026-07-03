@@ -46,7 +46,6 @@ def predict():
             credit_score = int(request.form.get('credit_score', 0))
             existing_emi_raw = request.form.get('existing_emi', '0')
             existing_emi = float(str(existing_emi_raw).replace(',', ''))
-            has_loan_default = request.form.get('loan_default_history') == 'on'
 
             # Save applicant details to database
             applicant = Applicant_Details(
@@ -55,8 +54,7 @@ def predict():
                 monthly_salary=monthly_salary,
                 employment_status=employment_status,
                 credit_score=credit_score,
-                existing_emi=existing_emi,
-                loan_default_history=has_loan_default
+                existing_emi=existing_emi
             )
 
             db.session.add(applicant)
@@ -68,8 +66,7 @@ def predict():
                 monthly_salary=monthly_salary,
                 credit_score=credit_score,
                 employment_status=employment_status,
-                existing_emi=existing_emi,
-                has_loan_default=has_loan_default
+                existing_emi=existing_emi
             )
             explanation = build_explanation(bool(prediction_label), checks)
 

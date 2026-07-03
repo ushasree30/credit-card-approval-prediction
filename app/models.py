@@ -32,7 +32,6 @@ class Applicant_Details(db.Model):
     employment_status = db.Column(db.String(50), nullable=False, default='Salaried')
     credit_score = db.Column(db.Integer, nullable=False, default=0)          # 300-900 typical range
     existing_emi = db.Column(db.Float, nullable=False, default=0.0)          # Rs./month
-    loan_default_history = db.Column(db.Boolean, nullable=False, default=False)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

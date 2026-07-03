@@ -1,5 +1,5 @@
 def evaluate_application(age_years, monthly_salary, credit_score, employment_status,
-                          existing_emi, has_loan_default):
+                          existing_emi):
     """
     Pure rule-based credit card approval engine.
 
@@ -9,7 +9,6 @@ def evaluate_application(age_years, monthly_salary, credit_score, employment_sta
       3. Credit score is 700 or above
       4. Employment status is 'Salaried' or 'Self-employed'
       5. Existing EMI is less than or equal to 40% of monthly salary
-      6. There is no previous loan default
 
     Returns a tuple: (prediction, probability, reasons)
       prediction  : 1 if approved, 0 if rejected
@@ -48,12 +47,7 @@ def evaluate_application(age_years, monthly_salary, credit_score, employment_sta
             'passed': existing_emi <= emi_limit,
             'detail': f'Existing EMI is Rs. {existing_emi:,.0f}, which is {emi_ratio:.1f}% of salary '
                       f'(limit is Rs. {emi_limit:,.0f}).'
-        },
-        {
-            'label': 'No previous loan default',
-            'passed': not has_loan_default,
-            'detail': 'Applicant has defaulted before.' if has_loan_default else 'No default on record.'
-        },
+        }
     ]
 
     approved = all(c['passed'] for c in checks)

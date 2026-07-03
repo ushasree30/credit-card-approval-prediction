@@ -60,19 +60,10 @@
                     </div>
                 </div>
 
-                <!-- Row 4: Credit Score & Default Checkbox -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: end;">
-                    <div class="form-group">
-                        <label for="credit_score" class="form-label">Credit Score</label>
-                        <input type="number" id="credit_score" name="credit_score" class="form-control" min="300" max="900" value="750" required>
-                    </div>
-                    
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label style="display: flex; align-items: center; justify-content: center; height: 38px; gap: 0.5rem; font-size: 0.95rem; cursor: pointer; font-weight: 500; border: 1px solid rgba(255,100,100,0.2); border-radius: 8px; background: rgba(255,100,100,0.05); transition: all 0.2s;">
-                            <input type="checkbox" id="loan_default_history" name="loan_default_history" style="accent-color: var(--primary);"> 
-                            <span style="color: #ff8888;">Loan Default History?</span>
-                        </label>
-                    </div>
+                <!-- Row 4: Credit Score -->
+                <div class="form-group">
+                    <label for="credit_score" class="form-label">Credit Score</label>
+                    <input type="number" id="credit_score" name="credit_score" class="form-control" min="300" max="900" value="750" required>
                 </div>
             </div>
 
