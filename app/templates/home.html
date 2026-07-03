@@ -3,36 +3,36 @@
 {% block title %}Welcome - Credit Card Approval Predictor{% endblock %}
 
 {% block content %}
-<div style="margin-top: 0.5rem; max-width: 900px; margin-left: auto; margin-right: auto;">
+<div style="margin-top: 0; max-width: 900px; margin-left: auto; margin-right: auto;">
     <!-- Project Showcase Hero -->
     <div class="card"
-        style="text-align: center; padding: 3.5rem 2rem 4rem 2rem; margin-bottom: 3rem; position: relative; overflow: hidden;">
+        style="text-align: center; padding: 2.25rem 2rem 2.5rem 2rem; margin-bottom: 2rem; position: relative; overflow: hidden;">
         <!-- Small Brand Badge/Chip -->
         <div
-            style="display: inline-flex; align-items: center; justify-content: center; padding: 4px 16px; border-radius: 999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1.25rem; color: var(--text-muted);">
+            style="display: inline-flex; align-items: center; justify-content: center; padding: 4px 14px; border-radius: 999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1.25rem; color: var(--text-muted);">
             Credit Assessment Engine
         </div>
 
         <h1
-            style="font-size: 3.2rem; font-weight: 500; letter-spacing: -0.05em; line-height: 1.1; margin-bottom: 1rem; color: #ffffff;">
+            style="font-size: 2.5rem; font-weight: 500; letter-spacing: -0.04em; line-height: 1.15; margin-bottom: 0.75rem; color: #ffffff;">
             Credit Card Approval Predictor
         </h1>
 
         <p
-            style="color: var(--neutral-300); font-size: 1.1rem; max-width: 650px; margin: 0 auto 2rem auto; line-height: 1.6; font-weight: 300;">
+            style="color: var(--neutral-300); font-size: 0.95rem; max-width: 600px; margin: 0 auto 1.5rem auto; line-height: 1.5; font-weight: 300;">
             An interactive end-to-end banking application designed to automate and optimize creditworthiness evaluations
             with structural transparency.
         </p>
 
         <!-- Identity Card Animation (HTML/CSS port of React Framer Motion snippet) -->
-        <div style="display: flex; justify-content: center; margin-bottom: 2.25rem;">
+        <div style="display: flex; justify-content: center; margin-bottom: 2rem;">
             <div class="identity-card" style="
                 position: relative; 
-                height: 13rem;
-                width: 20rem;
-                border-radius: 1rem; 
-                padding: 1.5rem; 
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4); 
+                height: 9rem;
+                width: 14.5rem;
+                border-radius: 0.75rem; 
+                padding: 1.25rem; 
+                box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5); 
                 color: white; 
                 display: flex; 
                 flex-direction: column; 
@@ -46,22 +46,22 @@
             ">
                 <!-- Overlay -->
                 <div
-                    style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; background-color: rgba(0,0,0,0.5); border-radius: 1rem;">
+                    style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; background-color: rgba(0,0,0,0.55); border-radius: 0.75rem;">
                 </div>
 
                 <!-- Card Content -->
                 <div
-                    style="position: relative; z-index: 10; display: flex; justify-content: space-between; align-items: flex-start; font-size: 0.75rem; letter-spacing: 0.05em; font-family: monospace; color: rgba(255,255,255,0.7);">
+                    style="position: relative; z-index: 10; display: flex; justify-content: space-between; align-items: flex-start; font-size: 0.65rem; letter-spacing: 0.05em; font-family: monospace; color: rgba(255,255,255,0.7);">
                     <span>CREDIT CARD</span>
                     <span>VALID</span>
                 </div>
 
                 <div style="position: relative; z-index: 10; font-family: monospace;">
                     <p
-                        style="font-size: 1.125rem; letter-spacing: 0.15em; font-weight: 600; margin: 0 0 0.5rem 0; color: #ffffff;">
+                        style="font-size: 0.95rem; letter-spacing: 0.12em; font-weight: 600; margin: 0 0 0.25rem 0; color: #ffffff;">
                         ID **** 1998</p>
                     <div
-                        style="display: flex; justify-content: space-between; font-size: 0.875rem; color: rgba(255,255,255,0.8);">
+                        style="display: flex; justify-content: space-between; font-size: 0.75rem; color: rgba(255,255,255,0.8);">
                         <span>CROMENOCKLE</span>
                         <span>11/29</span>
                     </div>
@@ -226,7 +226,7 @@
                     </a>
                 </div>
             </div>
-            <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost" style="padding: 0.8rem 2.2rem;">
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-ghost" style="padding: 10px 24px; font-size: 15px; font-weight: 500;">
                 View Analytics
             </a>
         </div>
