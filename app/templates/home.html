@@ -87,15 +87,31 @@
             }
 
             /* Unlumen-style Glow Button (Colors: Red, Green, Blue, Yellow) */
+            /* Unlumen-style Glow Button (Colors: Red, Green, Blue, Yellow) */
             .unlumen-glow-container {
                 position: relative;
                 display: inline-block;
                 border-radius: 9999px;
-                transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, filter 0.2s ease;
+                cursor: pointer;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             }
 
             .unlumen-glow-container:hover {
-                transform: scale(1.02);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+                filter: brightness(1.1);
+            }
+
+            .unlumen-glow-container:active {
+                transform: scale(0.98);
+            }
+
+            .unlumen-glow-container:disabled,
+            .unlumen-glow-container[disabled] {
+                opacity: 0.5;
+                cursor: not-allowed;
+                pointer-events: none;
             }
 
             /* The blurred backdrop (glow) */
@@ -119,6 +135,18 @@
                 opacity: 0.6;
                 z-index: 0;
                 border-radius: 50%;
+                transition: opacity 0.2s ease, filter 0.2s ease;
+            }
+
+            .unlumen-glow-container:hover .unlumen-glow-blur {
+                opacity: 0.8;
+                filter: blur(32px);
+            }
+
+            .unlumen-glow-container:disabled .unlumen-glow-blur,
+            .unlumen-glow-container[disabled] .unlumen-glow-blur {
+                animation: none;
+                opacity: 0;
             }
 
             .unlumen-glow-border {
@@ -182,11 +210,8 @@
             <div class="unlumen-glow-container">
                 <div class="unlumen-glow-blur"></div>
                 <div class="unlumen-glow-border">
-                    <a href="{{ url_for('main.predict') }}" class="unlumen-glow-inner">
-                        Get Started
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
+                    <a href="{{ url_for('main.predict') }}" class="unlumen-glow-inner" aria-label="Evaluate Applicant">
+                        Evaluate Applicant
                     </a>
                 </div>
             </div>
