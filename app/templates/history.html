@@ -40,12 +40,11 @@
                                 {{ pred.predicted_at.strftime('%Y-%m-%d %H:%M') }}
                             </td>
                             <td style="font-size: 0.85rem; color: #ffffff;">
-                                {{ 'Male' if pred.applicant.gender == 'M' else 'Female' }}, 
-                                {{ "%.0f"|format(-pred.applicant.days_birth / 365.25) }} Yrs, 
-                                {{ pred.applicant.name_family_status }}
+                                {{ "%.0f"|format(pred.applicant.age_years) }} Yrs, 
+                                {{ pred.applicant.employment_status }}
                             </td>
                             <td style="font-size: 0.85rem; font-weight: 500;">
-                                ₹{{ "{:,.0f}".format(pred.applicant.amt_income_total / 12) }}
+                                ₹{{ "{:,.0f}".format(pred.applicant.monthly_salary) }}
                             </td>
                             <td style="font-size: 0.85rem;">
                                 {{ pred.ml_model.model_name }}
