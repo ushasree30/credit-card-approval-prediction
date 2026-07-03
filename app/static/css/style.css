@@ -1,25 +1,27 @@
 /* Core Typography & CSS Variables */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* Custom Premium Scrollbar */
+/* Custom Premium Scrollbar (Shadcn UI ScrollArea style) */
 ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #000000;
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.15); /* bg-border style */
     border-radius: 999px;
-    border: 3px solid #000000; /* Padding around thumb */
+    border: 2px solid transparent; /* creates inset padding */
+    background-clip: padding-box;
     transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.3);
+    background-clip: padding-box;
 }
 
 :root {
@@ -49,7 +51,7 @@
 /* Reset & Base Styles */
 html {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.15) #000000;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
 }
 
 * {
