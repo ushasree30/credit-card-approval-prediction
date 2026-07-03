@@ -4,36 +4,41 @@
 
 {% block content %}
 <div style="max-width: 700px; margin: 1.5rem auto;">
-    <div class="card result-card">
+    <div class="card result-card" style="margin-top: 2rem;">
+        <!-- App Preview Window Controls -->
+        <div class="app-preview-header">
+            <div class="app-preview-dot"></div>
+            <div class="app-preview-dot"></div>
+            <div class="app-preview-dot"></div>
+        </div>
         
         <!-- Status indicator -->
         {% if prediction.prediction_result == 1 %}
-            <div class="result-badge status-approved">
+            <div class="result-badge" style="background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.25);">
                 <span class="result-icon">✓</span>
             </div>
-            <h2 class="result-status" style="color: var(--success);">Applicant Approved</h2>
-            <p style="color: var(--text-muted); margin-bottom: 2rem;">The applicant meets the creditworthiness criteria based on the active model evaluation.</p>
+            <h2 class="result-status" style="color: #ffffff;">Applicant Approved</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem;">The applicant meets the creditworthiness criteria based on the engine evaluation.</p>
         {% else %}
-            <div class="result-badge status-rejected">
-                <span class="result-icon">✗</span>
+            <div class="result-badge" style="background: rgba(255, 255, 255, 0.03); border-color: rgba(255, 255, 255, 0.08);">
+                <span class="result-icon" style="color: rgba(255, 255, 255, 0.4);">✗</span>
             </div>
-            <h2 class="result-status" style="color: var(--danger);">Applicant Rejected</h2>
-            <p style="color: var(--text-muted); margin-bottom: 2rem;">The applicant represents a high delinquency risk based on historical records.</p>
+            <h2 class="result-status" style="color: rgba(255, 255, 255, 0.5);">Applicant Rejected</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem;">The applicant does not meet one or more criteria of the approval rules.</p>
         {% endif %}
 
         <!-- Probability Box -->
         <div class="result-prob-box">
-            <p class="prob-title">CONFIDENCE / APPROVAL PROBABILITY</p>
+            <p class="prob-title">Confidence / Approval Probability</p>
             <div class="prob-percentage">{{ "%.1f"|format(prediction.prediction_probability * 100) }}%</div>
             <div class="prob-bar-container">
-                <div class="prob-bar {% if prediction.prediction_result == 1 %}status-approved{% else %}status-rejected{% endif %}" 
-                     style="width: {{ prediction.prediction_probability * 100 }}%;"></div>
+                <div class="prob-bar" style="width: {{ prediction.prediction_probability * 100 }}%;"></div>
             </div>
         </div>
 
         <!-- Explanation Box -->
         {% if prediction.explanation %}
-        <div style="text-align: left; margin: 1.5rem 0; padding: 1.2rem; border-radius: 12px; background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.3);">
+        <div style="text-align: left; margin: 1.5rem 0; padding: 1.2rem; border-radius: 12px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color);">
             <h4 style="color: var(--primary); margin-bottom: 0.5rem; font-family: 'Outfit'; font-size: 1rem; font-weight: 600;">📋 Decision Explanation</h4>
             <p style="font-size: 0.95rem; line-height: 1.5; color: var(--text-main); margin: 0;">{{ prediction.explanation }}</p>
         </div>
