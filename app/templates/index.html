@@ -87,7 +87,7 @@
                         color: var(--text-muted);
                         backface-visibility: hidden;
                         -webkit-backface-visibility: hidden;
-                        transform-origin: center center -80px; /* Radius of 80px */
+                        transform-origin: center center;
                         transition: color 0.15s ease, opacity 0.15s ease;
                     }
 
@@ -261,9 +261,9 @@
                 item.className = 'ios-picker-item';
                 item.textContent = val;
                 
-                // Form cylinder orbit rotation
+                // Form cylinder orbit rotation with radius translateZ
                 const angle = i * this.angleStep;
-                item.style.transform = `rotateX(${angle}deg)`;
+                item.style.transform = `rotateX(${angle}deg) translateZ(${this.radius}px)`;
                 
                 fragment.appendChild(item);
                 this.items.push({
@@ -302,8 +302,8 @@
                 this.wheel.style.transition = 'transform 0.22s cubic-bezier(0.1, 0.8, 0.25, 1)';
             }
             
-            // Rotate the wheel container in the opposite direction of the item's position
-            this.wheel.style.transform = `rotateX(${-this.currentAngle}deg)`;
+            // Translate the wheel back by radius, and rotate in opposite direction of active item
+            this.wheel.style.transform = `translateZ(${-this.radius}px) rotateX(${-this.currentAngle}deg)`;
             
             // Identify active index and fade non-centered items
             const activeIndex = Math.max(0, Math.min(this.items.length - 1, Math.round(this.currentAngle / this.angleStep)));
