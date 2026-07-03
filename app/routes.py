@@ -36,44 +36,13 @@ def predict():
 
     if request.method == 'POST':
         try:
-            # --- Core fields already in the schema ---
-            gender = request.form.get('gender')
-            own_car = request.form.get('own_car')
-            own_realty = request.form.get('own_realty')
-            cnt_children = int(request.form.get('cnt_children', 0))
-
-            # Monthly salary is now the primary input; annual income is derived
-            # from it so the existing amt_income_total column keeps working.
+            # --- Core fields for rule-based engine ---
             monthly_salary_raw = request.form.get('monthly_salary', '0')
             monthly_salary = float(str(monthly_salary_raw).replace(',', ''))
-            amt_income_total = monthly_salary * 12
-
-            name_income_type = request.form.get('name_income_type')
-            name_education_type = request.form.get('name_education_type')
-            name_family_status = request.form.get('name_family_status')
-            name_housing_type = request.form.get('name_housing_type')
-
+            
             age_years = float(request.form.get('age', 0))
-            days_birth = int(-age_years * 365.25)
-
-            # Employment status now only expects the two qualifying values,
-            # plus other statuses that will simply fail the rule check.
             employment_status = request.form.get('employment_status')
-            if employment_status == 'Unemployed':
-                days_employed = 365243  # Standard Kaggle code for unemployed/pensioner
-            else:
-                exp_years = float(request.form.get('experience', 0))
-                days_employed = int(-exp_years * 365.25)
-
-            flag_mobil = int(request.form.get('flag_mobil', 1))
-            flag_work_phone = int(request.form.get('flag_work_phone', 0))
-            flag_phone = int(request.form.get('flag_phone', 0))
-            flag_email = int(request.form.get('flag_email', 0))
-            occupation_type = request.form.get('occupation_type')
-
-            # --- New fields required by the approval rules ---
-            # NOTE: credit_score, existing_emi and loan_default_history need
-            # corresponding columns added to Applicant_Details (see models.py).
+            
             credit_score = int(request.form.get('credit_score', 0))
             existing_emi_raw = request.form.get('existing_emi', '0')
             existing_emi = float(str(existing_emi_raw).replace(',', ''))
@@ -82,22 +51,9 @@ def predict():
             # Save applicant details to database
             applicant = Applicant_Details(
                 user_id=None,
-                gender=gender,
-                own_car=own_car,
-                own_realty=own_realty,
-                cnt_children=cnt_children,
-                amt_income_total=amt_income_total,
-                name_income_type=name_income_type,
-                name_education_type=name_education_type,
-                name_family_status=name_family_status,
-                name_housing_type=name_housing_type,
-                days_birth=days_birth,
-                days_employed=days_employed,
-                flag_mobil=flag_mobil,
-                flag_work_phone=flag_work_phone,
-                flag_phone=flag_phone,
-                flag_email=flag_email,
-                occupation_type=occupation_type,
+                age_years=age_years,
+                monthly_salary=monthly_salary,
+                employment_status=employment_status,
                 credit_score=credit_score,
                 existing_emi=existing_emi,
                 loan_default_history=has_loan_default

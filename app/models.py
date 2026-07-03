@@ -26,25 +26,10 @@ class Applicant_Details(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # Creator user
 
-    # Demographic / Personal features
-    gender = db.Column(db.String(10), nullable=False)             # CODE_GENDER (M/F)
-    own_car = db.Column(db.String(5), nullable=False)              # FLAG_OWN_CAR (Y/N)
-    own_realty = db.Column(db.String(5), nullable=False)           # FLAG_OWN_REALTY (Y/N)
-    cnt_children = db.Column(db.Integer, nullable=False)          # CNT_CHILDREN
-    amt_income_total = db.Column(db.Float, nullable=False)        # AMT_INCOME_TOTAL (annual, derived from monthly_salary)
-    name_income_type = db.Column(db.String(50), nullable=False)    # NAME_INCOME_TYPE
-    name_education_type = db.Column(db.String(100), nullable=False)  # NAME_EDUCATION_TYPE
-    name_family_status = db.Column(db.String(50), nullable=False)  # NAME_FAMILY_STATUS
-    name_housing_type = db.Column(db.String(50), nullable=False)   # NAME_HOUSING_TYPE
-    days_birth = db.Column(db.Integer, nullable=False)             # DAYS_BIRTH (Age in days, negative)
-    days_employed = db.Column(db.Integer, nullable=False)          # DAYS_EMPLOYED (Employment in days, negative)
-    flag_mobil = db.Column(db.Integer, default=1)                 # FLAG_MOBIL
-    flag_work_phone = db.Column(db.Integer, default=0)            # FLAG_WORK_PHONE
-    flag_phone = db.Column(db.Integer, default=0)                 # FLAG_PHONE
-    flag_email = db.Column(db.Integer, default=0)                 # FLAG_EMAIL
-    occupation_type = db.Column(db.String(100), nullable=True)     # OCCUPATION_TYPE
-
-    # --- New fields required by the rule-based approval engine ---
+    # --- Core fields required by the rule-based approval engine ---
+    age_years = db.Column(db.Float, nullable=False, default=30.0)
+    monthly_salary = db.Column(db.Float, nullable=False, default=0.0)
+    employment_status = db.Column(db.String(50), nullable=False, default='Salaried')
     credit_score = db.Column(db.Integer, nullable=False, default=0)          # 300-900 typical range
     existing_emi = db.Column(db.Float, nullable=False, default=0.0)          # Rs./month
     loan_default_history = db.Column(db.Boolean, nullable=False, default=False)
