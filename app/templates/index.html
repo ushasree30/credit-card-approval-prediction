@@ -313,11 +313,17 @@
                 if (idx === activeIndex) {
                     item.element.classList.add('selected');
                     item.element.style.opacity = '1';
-                } else {
+                    item.element.style.visibility = 'visible';
+                } else if (diff <= 2) {
                     item.element.classList.remove('selected');
                     // Fade items out the further they are from the center highlight
-                    const fade = Math.max(0.12, 1.0 - diff * 0.25);
+                    const fade = 1.0 - diff * 0.35;
                     item.element.style.opacity = fade.toString();
+                    item.element.style.visibility = 'visible';
+                } else {
+                    item.element.classList.remove('selected');
+                    item.element.style.opacity = '0';
+                    item.element.style.visibility = 'hidden';
                 }
             });
             
